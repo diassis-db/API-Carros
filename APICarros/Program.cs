@@ -1,5 +1,7 @@
 using APICarros.Data;
-using Microsoft.AspNetCore.Builder;
+using APICarros.Domain.Validation;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +16,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<MySqlContext>(
     options => options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddValidatorsFromAssemblyContaining<CarroValidation>();
 
 var app = builder.Build();     //Configure()
 

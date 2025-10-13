@@ -70,8 +70,13 @@ namespace APICarros.Controllers
 
         // POST: api/Carro
         [HttpPost]
+        [ProducesResponseType(typeof(Carro), StatusCodes.Status201Created)]
         public async Task<ActionResult<Carro>> PostCarro(Carro carro)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             _context.Carros.Add(carro);
             await _context.SaveChangesAsync();
 
