@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using APICarros.Data;
 using APICarros.Domain;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace APICarros.Controllers
 {
@@ -16,15 +17,18 @@ namespace APICarros.Controllers
             _context = context;
         }
 
-        // GET: api/Carro
         [HttpGet]
+        [SwaggerOperation(
+            Summary = "Obter todos os carros cadastrados na base de dados.")]
         public async Task<ActionResult<IEnumerable<Carro>>> GetCarros()
         {
             return await _context.Carros.ToListAsync();
         }
 
-        // GET: api/Carro/5
+        // GET: api/Carro/5        
         [HttpGet("{id}")]
+        [SwaggerOperation(
+            Summary = "Obter carro pelo Id.")]
         public async Task<ActionResult<Carro>> GetCarro(int id)
         {
             var carro = await _context.Carros.FindAsync(id);
@@ -40,6 +44,8 @@ namespace APICarros.Controllers
         // PUT: api/Carro/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut()]
+        [SwaggerOperation(
+            Summary = "Alteração caso seja necessário para modelo, ano e cor")]
         public async Task<IActionResult> PutCarro(int id, Carro carro)
         {
             if (id != carro.Id)
@@ -70,6 +76,8 @@ namespace APICarros.Controllers
 
         // POST: api/Carro
         [HttpPost]
+        [SwaggerOperation(
+            Summary = "Inserir um novo modelo de carro na base de dados.")]
         [ProducesResponseType(typeof(Carro), StatusCodes.Status201Created)]
         public async Task<ActionResult<Carro>> PostCarro(Carro carro)
         {

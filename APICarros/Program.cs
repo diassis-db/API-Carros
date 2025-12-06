@@ -3,6 +3,7 @@ using APICarros.Domain.Validation;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,7 +14,9 @@ var connectionString = builder.Configuration.GetConnectionString("MySql");
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+builder.Services.AddSwaggerGen(c => { c.EnableAnnotations(); });
+
 builder.Services.AddDbContext<MySqlContext>(
     options => options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
@@ -34,6 +37,6 @@ app.UseHttpsRedirection();
 app.UseAuthorization();  //Middleware pipeline to handle authorization
 
 app.MapControllers();
-app.MapGet("/",() => Results.Redirect("api/v1/carro")); //Redireciona para o controller de Carro.
+//app.MapGet("/",() => Results.Redirect("api/v1/carro")); //Redireciona para o controller de Carro.
 
 app.Run();
