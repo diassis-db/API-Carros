@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using APICarros.Data;
 using APICarros.Domain;
 using Swashbuckle.AspNetCore.Annotations;
+using APICarros.Applications;
 
 namespace APICarros.Controllers
 {
@@ -46,17 +47,20 @@ namespace APICarros.Controllers
         [HttpPut()]
         [SwaggerOperation(
             Summary = "Alteração caso seja necessário para modelo, ano e cor")]
-        public async Task<IActionResult> PutCarro(int id, Carro carro)
+        public async Task<IActionResult> PutCarro(int id, CarroDto dto)
         {
-            if (id != carro.Id)
-            {
-                return BadRequest();
-            }
+            var carro = await _context.Carros.FindAsync(id);
 
-            _context.Entry(carro).State = EntityState.Modified;
+            if(carro == null)
+            {
+                return NotFound();
+            }
 
             try
             {
+                carro.Modelo = dto.Modelo;
+                carro.Ano = dto.Ano;
+                carro.Cor = dto.Cor;
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
