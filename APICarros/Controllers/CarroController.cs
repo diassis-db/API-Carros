@@ -31,13 +31,9 @@ namespace APICarros.Controllers
                 return BadRequest(ModelState);
             }
 
-            Carro carro = new Carro();
-            carro.Modelo = dto.Modelo;
-            carro.Ano = dto.Ano;
-            carro.Cor = dto.Cor;
+            Carro carro = dto;
             _context.Carros.Add(carro);
             await _context.SaveChangesAsync();
-
             var response = new Response<Carro>
             {
                 Dados = carro,
@@ -90,9 +86,7 @@ namespace APICarros.Controllers
 
             try
             {
-                carro.Modelo = dto.Modelo;
-                carro.Ano = dto.Ano;
-                carro.Cor = dto.Cor;
+                Carro carro1 = dto;
                 await _context.SaveChangesAsync();
 
                 var response = new Response<Carro>
