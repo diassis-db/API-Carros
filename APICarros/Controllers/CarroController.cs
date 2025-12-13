@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using APICarros.Applications;
 using APICarros.Data;
 using APICarros.Domain;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
-using APICarros.Applications;
 
 namespace APICarros.Controllers
 {
@@ -18,6 +18,37 @@ namespace APICarros.Controllers
             _context = context;
         }
 
+        // POST: Cadastrar novo carro.
+        [HttpPost]
+        [SwaggerOperation(
+            Summary = "Inserir um novo modelo de carro na base de dados.")]
+        [ProducesResponseType(typeof(Response<Carro>), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<Response<Carro>>> PostCarro(CarroDto dto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            Carro carro = new Carro();
+            carro.Modelo = dto.Modelo;
+            carro.Ano = dto.Ano;
+            carro.Cor = dto.Cor;
+            _context.Carros.Add(carro);
+            await _context.SaveChangesAsync();
+
+            var response = new Response<Carro>
+            {
+                Dados = carro,
+                Message = "Carro criado com sucesso.",
+                Success = true
+            };
+
+            return CreatedAtAction("GetCarro", new { id = carro.Id }, response);
+        }
+
+        // GET: Listar todos os carros.
         [HttpGet]
         [SwaggerOperation(
             Summary = "Obter todos os carros cadastrados na base de dados.")]
@@ -26,7 +57,7 @@ namespace APICarros.Controllers
             return await _context.Carros.ToListAsync();
         }
 
-        // GET: api/Carro/5        
+        // GET: Obter carro pelo Id.        
         [HttpGet("{id}")]
         [SwaggerOperation(
             Summary = "Obter carro pelo Id.")]
@@ -42,11 +73,12 @@ namespace APICarros.Controllers
             return carro;
         }
 
-        // PUT: api/Carro/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        // PUT: Alterar dados do carro.
         [HttpPut()]
         [SwaggerOperation(
             Summary = "Alteração caso seja necessário para modelo, ano e cor")]
+        [ProducesResponseType(typeof(Response<Carro>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> PutCarro(int id, CarroDto dto)
         {
             var carro = await _context.Carros.FindAsync(id);
@@ -62,6 +94,15 @@ namespace APICarros.Controllers
                 carro.Ano = dto.Ano;
                 carro.Cor = dto.Cor;
                 await _context.SaveChangesAsync();
+
+                var response = new Response<Carro>
+                {
+                    Dados = carro,
+                    Message = "Alterações realizada com sucesso.",
+                    Success = true
+                };
+
+                return Ok(response);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -74,28 +115,9 @@ namespace APICarros.Controllers
                     throw;
                 }
             }
-
-            return NoContent();
         }
 
-        // POST: api/Carro
-        [HttpPost]
-        [SwaggerOperation(
-            Summary = "Inserir um novo modelo de carro na base de dados.")]
-        [ProducesResponseType(typeof(Carro), StatusCodes.Status201Created)]
-        public async Task<ActionResult<Carro>> PostCarro(Carro carro)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            _context.Carros.Add(carro);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetCarro", new { id = carro.Id }, carro);
-        }
-
-        // DELETE: api/Carro/5
+        // DELETE: Excluir carro.
         [HttpDelete]
         public async Task<IActionResult> DeleteCarro(int id)
         {
@@ -107,8 +129,14 @@ namespace APICarros.Controllers
 
             _context.Carros.Remove(carro);
             await _context.SaveChangesAsync();
+            var response = new Response<Carro>
+            {
+                Dados = carro,
+                Message = "Dados excluidos com sucesso.",
+                Success = true
+            };
 
-            return NoContent();
+            return Ok(response);
         }
 
         private bool CarroExists(int id)
