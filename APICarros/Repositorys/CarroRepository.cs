@@ -1,4 +1,5 @@
-﻿using APICarros.Data.Context;
+﻿using APICarros.Applications;
+using APICarros.Data.Context;
 using APICarros.Domain;
 using APICarros.Interface;
 using Microsoft.EntityFrameworkCore;
@@ -21,11 +22,16 @@ namespace APICarros.Repositorys
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Carro> UpdateAsync(Carro data)
+        public async Task UpdateAsync(Carro data)
         {
-            _context.Carros.Update(data);
+            var carro = await _context.Carros.FirstOrDefaultAsync(c => c.Id == data.Id);
+
+            if(carro == null) throw new KeyNotFoundException($"Carro with ID {data.Id} not found.");
+
+            carro.Modelo = data.Modelo;
+            carro.Ano = data.Ano;
+            carro.Cor = data.Cor;
             await _context.SaveChangesAsync();
-            return data;
         }
 
         public async Task<Carro> GetByIdAsync(int id)
@@ -43,7 +49,7 @@ namespace APICarros.Repositorys
             var dados = await _context.Carros.FirstOrDefaultAsync(i => i.Id == id);
             if(dados is null) return "Id não encontrado.";
 
-            _context.Carros.Update(dados);
+            _context.Carros.Remove(dados);
             await _context.SaveChangesAsync();
             return "Dado excluído com sucesso";
         }

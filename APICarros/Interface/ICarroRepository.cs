@@ -6,7 +6,7 @@ namespace APICarros.Interface
     {
             Task SaveAsync(Carro data);
             Task<IEnumerable<Carro>> GetAllAsync();
-            Task<Carro> UpdateAsync(Carro data);
+            Task UpdateAsync(Carro data);
             Task<Carro> GetByIdAsync(int id);
             Task<string> DeleteAsync(int id);
     }

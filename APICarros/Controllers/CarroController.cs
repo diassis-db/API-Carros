@@ -1,6 +1,7 @@
 ﻿using APICarros.Applications;
 using APICarros.Data.Context;
 using APICarros.Domain;
+using APICarros.Interface;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
@@ -11,11 +12,10 @@ namespace APICarros.Controllers
     [ApiController]
     public class CarroController : ControllerBase
     {
-        private readonly MySqlContext _context;
-
-        public CarroController(MySqlContext context)
+        private readonly ICarroRepository _carroRepository;
+        public CarroController(ICarroRepository carroRepository)
         {
-            _context = context;
+            _carroRepository = carroRepository;
         }
 
         // POST: Cadastrar novo carro.
@@ -26,14 +26,10 @@ namespace APICarros.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<Response<Carro>>> PostCarro(CarroDto dto)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
             Carro carro = dto;
-            _context.Carros.Add(carro);
-            await _context.SaveChangesAsync();
+            await _carroRepository.SaveAsync(carro);
             var response = new Response<Carro>
             {
                 Dados = carro,
@@ -50,7 +46,8 @@ namespace APICarros.Controllers
             Summary = "Obter todos os carros cadastrados na base de dados.")]
         public async Task<ActionResult<IEnumerable<Carro>>> GetCarros()
         {
-            return await _context.Carros.ToListAsync();
+            var carros =  await _carroRepository.GetAllAsync();
+            return Ok(carros);
         }
 
         // GET: Obter carro pelo Id.        
@@ -59,14 +56,10 @@ namespace APICarros.Controllers
             Summary = "Obter carro pelo Id.")]
         public async Task<ActionResult<Carro>> GetCarro(int id)
         {
-            var carro = await _context.Carros.FindAsync(id);
+            var carro = await _carroRepository.GetByIdAsync(id);
 
-            if (carro == null)
-            {
-                return NotFound();
-            }
-
-            return carro;
+            if(carro == null) return NotFound();
+            return Ok(carro);
         }
 
         // PUT: Alterar dados do carro.
@@ -77,53 +70,35 @@ namespace APICarros.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> PutCarro(int id, CarroDto dto)
         {
-            var carro = await _context.Carros.FindAsync(id);
+            if(!ModelState.IsValid) return BadRequest(ModelState);
 
-            if(carro == null)
+            var carro = await _carroRepository.GetByIdAsync(id);
+
+            if (carro == null) return NotFound();
+
+            carro.Modelo = dto.Modelo;
+            carro.Ano = dto.Ano;
+            carro.Cor = dto.Cor;
+            await _carroRepository.UpdateAsync(carro);
+
+            var response = new Response<Carro>
             {
-                return NotFound();
-            }
-
-            try
-            {
-                Carro carro1 = dto;
-                await _context.SaveChangesAsync();
-
-                var response = new Response<Carro>
-                {
-                    Dados = carro,
-                    Message = "Alterações realizada com sucesso.",
-                    Success = true
-                };
-
-                return Ok(response);
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CarroExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+                Dados = carro,
+                Message = "Dados alterados com sucesso.",
+                Success = true
+            };
+            return Ok(response);
         }
 
         // DELETE: Excluir carro.
         [HttpDelete]
         public async Task<IActionResult> DeleteCarro(int id)
         {
-            var carro = await _context.Carros.FindAsync(id);
-            if (carro == null)
-            {
-                return NotFound();
-            }
+            var carro = await _carroRepository.DeleteAsync(id);
 
-            _context.Carros.Remove(carro);
-            await _context.SaveChangesAsync();
-            var response = new Response<Carro>
+            if (carro == null) return NotFound();
+
+            var response = new Response<string>
             {
                 Dados = carro,
                 Message = "Dados excluidos com sucesso.",
@@ -131,11 +106,6 @@ namespace APICarros.Controllers
             };
 
             return Ok(response);
-        }
-
-        private bool CarroExists(int id)
-        {
-            return _context.Carros.Any(e => e.Id == id);
         }
     }
 }
