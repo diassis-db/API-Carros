@@ -1,7 +1,7 @@
 ﻿using APICarros.Domain;
 using Microsoft.EntityFrameworkCore;
 
-namespace APICarros.Data
+namespace APICarros.Data.Context
 {
     public class MySqlContext : DbContext
     {

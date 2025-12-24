@@ -1,4 +1,4 @@
-﻿using APICarros.Data;
+﻿using APICarros.Data.Context;
 using APICarros.Domain;
 using APICarros.Interface;
 using Microsoft.EntityFrameworkCore;
@@ -21,10 +21,11 @@ namespace APICarros.Repositorys
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(Carro data)
+        public async Task<Carro> UpdateAsync(Carro data)
         {
             _context.Carros.Update(data);
             await _context.SaveChangesAsync();
+            return data;
         }
 
         public async Task<Carro> GetByIdAsync(int id)
@@ -49,11 +50,6 @@ namespace APICarros.Repositorys
         public async Task<IEnumerable<Carro>> GetAllAsync()
         {
             return await _context.Carros.ToListAsync();
-        }
-
-        Task<Carro> ICarroRepository.UpdateAsync(Carro data)
-        {
-            throw new NotImplementedException();
         }
     }
 
