@@ -1,5 +1,4 @@
-﻿using APICarros.Applications;
-using APICarros.Data.Context;
+﻿using APICarros.Data.Context;
 using APICarros.Domain;
 using APICarros.Interface;
 using Microsoft.EntityFrameworkCore;
@@ -47,11 +46,12 @@ namespace APICarros.Repositorys
         public async Task<string> DeleteAsync(int id)
         {
             var dados = await _context.Carros.FirstOrDefaultAsync(i => i.Id == id);
-            if(dados is null) return "Id não encontrado.";
 
-            _context.Carros.Remove(dados);
-            await _context.SaveChangesAsync();
-            return "Dado excluído com sucesso";
+            if (dados == null) throw new KeyNotFoundException($"Carro com ID {id} não encontrado.");
+
+                _context.Carros.Remove(dados);
+                await _context.SaveChangesAsync();
+                return "Dado excluído com sucesso";   
         }
         public async Task<IEnumerable<Carro>> GetAllAsync()
         {

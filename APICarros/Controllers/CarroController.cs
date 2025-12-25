@@ -1,9 +1,7 @@
 ﻿using APICarros.Applications;
-using APICarros.Data.Context;
 using APICarros.Domain;
 using APICarros.Interface;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace APICarros.Controllers
@@ -46,7 +44,7 @@ namespace APICarros.Controllers
             Summary = "Obter todos os carros cadastrados na base de dados.")]
         public async Task<ActionResult<IEnumerable<Carro>>> GetCarros()
         {
-            var carros =  await _carroRepository.GetAllAsync();
+            var carros = await _carroRepository.GetAllAsync();
             return Ok(carros);
         }
 
@@ -58,7 +56,7 @@ namespace APICarros.Controllers
         {
             var carro = await _carroRepository.GetByIdAsync(id);
 
-            if(carro == null) return NotFound();
+            if (carro == null) return NotFound();
             return Ok(carro);
         }
 
@@ -70,7 +68,7 @@ namespace APICarros.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> PutCarro(int id, CarroDto dto)
         {
-            if(!ModelState.IsValid) return BadRequest(ModelState);
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
             var carro = await _carroRepository.GetByIdAsync(id);
 
@@ -95,7 +93,6 @@ namespace APICarros.Controllers
         public async Task<IActionResult> DeleteCarro(int id)
         {
             var carro = await _carroRepository.DeleteAsync(id);
-
             if (carro == null) return NotFound();
 
             var response = new Response<string>
