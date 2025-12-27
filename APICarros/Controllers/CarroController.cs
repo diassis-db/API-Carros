@@ -24,8 +24,6 @@ namespace APICarros.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<Response<Carro>>> PostCarro(CarroDto dto)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
-
             Carro carro = dto;
             await _carroRepository.SaveAsync(carro);
             var response = new Response<Carro>
@@ -68,8 +66,6 @@ namespace APICarros.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> PutCarro(int id, CarroDto dto)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
-
             var carro = await _carroRepository.GetByIdAsync(id);
 
             if (carro == null) return NotFound();

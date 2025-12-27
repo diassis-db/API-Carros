@@ -2,7 +2,7 @@
 using FluentValidation;
 namespace APICarros.Domain.Validation
 {
-    public class CarroValidation : AbstractValidator<Carro>
+    public class CarroValidation : AbstractValidator<CarroDto>
     {
         public CarroValidation()
         {
