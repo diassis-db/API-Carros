@@ -54,7 +54,7 @@ namespace APICarros.Controllers
         {
             var carro = await _carroRepository.GetByIdAsync(id);
 
-            if (carro == null) return NotFound();
+            if (carro == null) return NotFound(new {message = $"Carro com id {id} não encontrado."});
             return Ok(carro);
         }
 

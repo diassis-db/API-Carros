@@ -35,12 +35,7 @@ namespace APICarros.Repositorys
 
         public async Task<Carro> GetByIdAsync(int id)
         {
-            var dados = await _context.Carros.FindAsync(id);
-            if(dados == null)
-            {
-                throw new KeyNotFoundException($"Carro with ID {id} not found.");
-            }
-            return dados;
+            return await _context.Carros.FindAsync(id);
         }
 
         public async Task<string> DeleteAsync(int id)
