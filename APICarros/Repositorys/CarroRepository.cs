@@ -33,10 +33,7 @@ namespace APICarros.Repositorys
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Carro> GetByIdAsync(int id)
-        {
-            return await _context.Carros.FindAsync(id);
-        }
+        public async Task<Carro> GetByIdAsync(int id) => await _context.Carros.FindAsync(id);
 
         public async Task<string> DeleteAsync(int id)
         {
@@ -48,10 +45,8 @@ namespace APICarros.Repositorys
                 await _context.SaveChangesAsync();
                 return "Dado excluído com sucesso";   
         }
-        public async Task<IEnumerable<Carro>> GetAllAsync()
-        {
-            return await _context.Carros.ToListAsync();
-        }
+        public async Task<IEnumerable<Carro>> GetAllAsync() => await _context.Carros.ToListAsync();
+        
     }
 
 }

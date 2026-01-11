@@ -86,6 +86,8 @@ namespace APICarros.Controllers
 
         // DELETE: Excluir carro.
         [HttpDelete]
+        [SwaggerOperation(
+            Summary = "Excluir carro da base de dados.")]
         public async Task<IActionResult> DeleteCarro(int id)
         {
             var carro = await _carroRepository.DeleteAsync(id);
