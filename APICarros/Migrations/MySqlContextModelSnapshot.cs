@@ -21,7 +21,7 @@ namespace APICarros.Migrations
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
-            modelBuilder.Entity("APIEstudos.Domain.Carro", b =>
+            modelBuilder.Entity("APICarros.Domain.Carro", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
