@@ -8,11 +8,6 @@ namespace APICarros.Applications
         public int Ano { get; set; }
         public string Cor { get; set; } = string.Empty;
 
-        public static implicit operator Carro(CarroDto dto ) => new Carro
-        {
-            Modelo = dto.Modelo,
-            Ano = dto.Ano,
-            Cor = dto.Cor
-        };
+        public static implicit operator Carro(CarroDto dto) => new Carro(dto.Modelo, dto.Ano, dto.Cor);
     }
 }

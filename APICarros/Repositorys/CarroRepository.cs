@@ -26,10 +26,8 @@ namespace APICarros.Repositorys
             var carro = await _context.Carros.FirstOrDefaultAsync(c => c.Id == data.Id);
 
             if(carro == null) throw new KeyNotFoundException($"Carro with ID {data.Id} not found.");
-
-            carro.Modelo = data.Modelo;
-            carro.Ano = data.Ano;
-            carro.Cor = data.Cor;
+            
+            _context.Carros.Update(data);
             await _context.SaveChangesAsync();
         }
 

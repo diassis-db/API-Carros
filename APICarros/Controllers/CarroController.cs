@@ -67,12 +67,10 @@ namespace APICarros.Controllers
         public async Task<IActionResult> PutCarro(int id, CarroDto dto)
         {
             var carro = await _carroRepository.GetByIdAsync(id);
-
+            
             if (carro == null) return NotFound();
 
-            carro.Modelo = dto.Modelo;
-            carro.Ano = dto.Ano;
-            carro.Cor = dto.Cor;
+            carro.Atualizar(dto.Modelo, dto.Ano, dto.Cor);
             await _carroRepository.UpdateAsync(carro);
 
             var response = new Response<Carro>
