@@ -25,6 +25,7 @@ namespace APICarros.Controllers
         public async Task<ActionResult<Response<Carro>>> PostCarro(CarroDto dto)
         {
             Carro carro = dto;
+            if(dto is null) return BadRequest(new {message = "Dados do carro são obrigatórios."});
             await _carroRepository.SaveAsync(carro);
             var response = new Response<Carro>
             {
